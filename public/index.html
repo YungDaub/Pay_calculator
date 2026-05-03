@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pay Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Custom cursor (desktop only) -->
+  <div id="cursor-dot"  class="cursor-dot"  aria-hidden="true"></div>
+  <div id="cursor-ring" class="cursor-ring" aria-hidden="true"></div>
+
+  <!-- Ambient background blobs -->
+  <div class="bg-blobs" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <!-- Sidebar overlay -->
+  <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+  <!-- Sidebar drawer -->
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-top">
+      <a class="brand" href="/">
+        <div class="brand-mark">£</div>
+        <div class="brand-text">
+          <span class="brand-name">Pay Calculator</span>
+          <span class="brand-sub">Zero-hours tracker</span>
+        </div>
+      </a>
+      <button id="sidebar-close" class="sidebar-close-btn" aria-label="Close menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="sidebar-btn active" data-tab="dashboard">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </button>
+      <button class="sidebar-btn" data-tab="shifts">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Shifts
+      </button>
+      <button class="sidebar-btn" data-tab="settings">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <p>UK zero-hours pay tracker</p>
+      <p>Holiday pay at 12.07%</p>
+    </div>
+  </aside>
+
+  <div class="layout">
+    <header class="header">
+      <div class="header-inner">
+        <div class="header-left">
+          <button class="hamburger" id="hamburger" aria-label="Open menu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <a class="brand" href="/">
+            <div class="brand-mark">£</div>
+            <div class="brand-text">
+              <span class="brand-name">Pay Calculator</span>
+              <span class="brand-sub">Zero-hours tracker</span>
+            </div>
+          </a>
+        </div>
+        <span id="header-tab-name" class="header-tab-name">Dashboard</span>
+      </div>
+    </header>
+
+    <main class="main">
+
+      <!-- DASHBOARD TAB -->
+      <section id="tab-dashboard" class="tab active">
+        <div id="alert-no-rates" class="alert alert-warning hidden">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Pay rates not configured. <a href="#" class="alert-link" data-goto="settings">Go to Settings</a> to set your hourly rate.
+        </div>
+        <div id="alert-no-tax" class="alert alert-info hidden">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Tax deductions disabled — showing gross figures only. Enable in <a href="#" class="alert-link" data-goto="settings">Settings</a>.</span>
+          <button id="dismiss-tax-alert" class="alert-dismiss" aria-label="Dismiss">&times;</button>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="card period-card">
+            <div class="card-label">This Month</div>
+            <div class="card-amount" id="dash-month-total">—</div>
+            <div class="card-sub" id="dash-month-net"></div>
+            <div class="card-detail">
+              <span id="dash-month-gross"></span>
+              <span id="dash-month-holiday"></span>
+              <span id="dash-month-hours"></span>
+            </div>
+            <div id="month-bars" class="month-bars" aria-hidden="true"></div>
+          </div>
+
+          <div class="card period-card">
+            <div class="card-label">This Week</div>
+            <div class="card-amount" id="dash-week-total">—</div>
+            <div class="card-sub" id="dash-week-net"></div>
+            <div class="card-detail">
+              <span id="dash-week-gross"></span>
+              <span id="dash-week-holiday"></span>
+              <span id="dash-week-hours"></span>
+            </div>
+          </div>
+
+          <div class="card period-card">
+            <div class="card-label">Year to Date</div>
+            <div class="card-amount" id="dash-ytd-total">—</div>
+            <div class="card-sub" id="dash-ytd-net"></div>
+            <div class="card-detail">
+              <span id="dash-ytd-gross"></span>
+              <span id="dash-ytd-holiday"></span>
+              <span id="dash-ytd-hours"></span>
+            </div>
+          </div>
+
+          <div class="card holiday-card">
+            <div>
+              <div class="card-label">Holiday pay accrued</div>
+              <div class="card-amount" id="dash-holiday-total">—</div>
+            </div>
+            <div class="holiday-right">
+              <div class="card-sub">12.07% of all gross pay</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card annual-card">
+          <div class="annual-header">
+            <div>
+              <h2 class="annual-title">Projected Annual</h2>
+              <p class="annual-desc">Based on your logged shifts this month × 12</p>
+            </div>
+            <div class="ring-wrap" aria-label="Year progress ring">
+              <svg class="progress-ring" viewBox="0 0 140 140" aria-hidden="true">
+                <circle class="ring-track" cx="70" cy="70" r="58"/>
+                <circle class="ring-fill" id="ring-fill" cx="70" cy="70" r="58"/>
+              </svg>
+              <div class="ring-inner">
+                <div class="annual-total" id="dash-annual-total">—</div>
+                <div class="ring-pct" id="ring-pct"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="tax-breakdown" class="hidden">
+            <div class="breakdown-grid">
+              <div class="breakdown-row gross-row">
+                <span class="breakdown-label">Total (gross + holiday pay)</span>
+                <span class="breakdown-value" id="annual-gross-total">—</span>
+              </div>
+              <div class="breakdown-row">
+                <span class="breakdown-label">Income Tax (20% above £12,570)</span>
+                <span class="breakdown-value deduction" id="annual-income-tax">—</span>
+              </div>
+              <div class="breakdown-row">
+                <span class="breakdown-label">NI Class 1 (8% above £242/week)</span>
+                <span class="breakdown-value deduction" id="annual-ni">—</span>
+              </div>
+              <div class="breakdown-row" id="student-loan-row">
+                <span class="breakdown-label">Student Loan Plan 2 (9% above £27,295)</span>
+                <span class="breakdown-value deduction" id="annual-student-loan">—</span>
+              </div>
+              <div class="breakdown-row total-row">
+                <span class="breakdown-label">Estimated Net Take-Home</span>
+                <span class="breakdown-value net" id="annual-net">—</span>
+              </div>
+            </div>
+            <p class="breakdown-note">Estimates based on projected annual earnings. Actual deductions depend on your employer's payroll.</p>
+          </div>
+
+          <div id="tax-disabled-note" class="tax-disabled-note">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Tax deductions not enabled — gross projection only
+          </div>
+        </div>
+
+        <!-- ALLOCATION SECTION -->
+        <div class="alloc-section">
+          <h2 class="section-heading">Allocation</h2>
+
+          <div class="card alloc-card">
+            <div class="alloc-card-top">
+              <div class="card-label">Monthly wage allocation</div>
+              <div class="alloc-total-wrap">
+                <span class="alloc-total" id="wage-alloc-total">—</span>
+                <span class="alloc-total-label">this month</span>
+              </div>
+            </div>
+            <div class="alloc-bar-layout" id="wage-alloc-bar"></div>
+          </div>
+
+          <div class="card alloc-card sfe-card">
+            <div class="sfe-top">
+              <div class="sfe-info">
+                <div class="card-label">Next SFE payment</div>
+                <div class="sfe-date-str" id="sfe-date">—</div>
+                <div class="sfe-amount-str" id="sfe-amount">—</div>
+              </div>
+              <div class="sfe-countdown">
+                <span class="sfe-days" id="sfe-days">—</span>
+                <span class="sfe-days-label">days away</span>
+              </div>
+            </div>
+            <div class="alloc-bar-layout" id="sfe-alloc-bar"></div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- SHIFTS TAB -->
+      <section id="tab-shifts" class="tab">
+        <div class="page-header">
+          <h2 class="page-title">Shift Log</h2>
+          <button class="btn btn-primary" id="btn-add-shift">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Log shift
+          </button>
+        </div>
+
+        <div id="shifts-empty" class="empty-state hidden">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <p>No shifts logged yet</p>
+          <button class="btn btn-primary" id="btn-add-shift-empty">Log your first shift</button>
+        </div>
+
+        <div id="shifts-list-wrap" class="shift-list-wrap hidden">
+          <div id="shifts-list" class="shift-list"></div>
+        </div>
+      </section>
+
+      <!-- SETTINGS TAB -->
+      <section id="tab-settings" class="tab">
+        <div class="page-header">
+          <h2 class="page-title">Settings</h2>
+        </div>
+
+        <form id="settings-form">
+          <div class="settings-section">
+            <div class="settings-section-head">
+              <h3 class="settings-section-title">Pay rates</h3>
+            </div>
+            <div class="settings-body">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label" for="currentRate">Current rate (£/hr)</label>
+                  <div class="input-wrap">
+                    <span class="input-prefix">£</span>
+                    <input class="form-input has-prefix" type="number" id="currentRate" name="currentRate" min="0" step="0.01" placeholder="0.00">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="postBirthdayRate">Post-birthday rate (£/hr)</label>
+                  <div class="input-wrap">
+                    <span class="input-prefix">£</span>
+                    <input class="form-input has-prefix" type="number" id="postBirthdayRate" name="postBirthdayRate" min="0" step="0.01" placeholder="0.00">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="rateChangeDate">Rate change date</label>
+                  <input class="form-input" type="date" id="rateChangeDate" name="rateChangeDate">
+                  <p class="form-hint">Shifts on or after this date use the post-birthday rate</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <div class="settings-section-head">
+              <h3 class="settings-section-title">Tax &amp; deductions</h3>
+            </div>
+            <div class="settings-body">
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <span class="toggle-label">Enable tax deductions</span>
+                  <span class="toggle-desc">Turn off if you're not yet on the tax register — shows gross + holiday pay only</span>
+                </div>
+                <label class="toggle">
+                  <input type="checkbox" id="taxEnabled" name="taxEnabled">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div id="tax-options" class="tax-options hidden">
+                <div class="toggle-row sub-toggle">
+                  <div class="toggle-info">
+                    <span class="toggle-label">Student Loan Plan 2</span>
+                    <span class="toggle-desc">9% on earnings above £27,295/year</span>
+                  </div>
+                  <label class="toggle">
+                    <input type="checkbox" id="studentLoanEnabled" name="studentLoanEnabled">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+              <div class="tax-reference">
+                <h4 class="tax-ref-title">2024/25 rates for reference</h4>
+                <table class="ref-table">
+                  <tbody>
+                    <tr><td>Personal Allowance</td><td>£12,570/year</td></tr>
+                    <tr><td>Basic Rate Income Tax</td><td>20% above allowance</td></tr>
+                    <tr><td>NI Class 1 (Employee)</td><td>8% above £242/week</td></tr>
+                    <tr><td>Student Loan Plan 2</td><td>9% above £27,295/year</td></tr>
+                    <tr><td>Rolled-up holiday pay</td><td>12.07% of gross per shift</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-actions">
+            <button type="submit" class="btn btn-primary btn-lg">Save</button>
+            <span id="settings-saved" class="save-confirm hidden">Saved</span>
+          </div>
+        </form>
+      </section>
+
+    </main>
+
+    <!-- FAB — mobile only, visible on Shifts tab -->
+    <button class="fab" id="fab-add-shift" aria-label="Log shift">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </button>
+
+    <!-- Bottom nav — mobile only -->
+    <nav class="bottom-nav" id="bottom-nav" aria-label="Main navigation">
+      <button class="bottom-nav-btn active" data-tab="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span>Dashboard</span>
+      </button>
+      <button class="bottom-nav-btn" data-tab="shifts">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>Shifts</span>
+      </button>
+      <button class="bottom-nav-btn" data-tab="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span>Settings</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- SHIFT MODAL -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-title">Log Shift</h3>
+        <button class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+      </div>
+      <form id="shift-form" class="modal-body">
+        <input type="hidden" id="shift-id">
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label" for="shift-date">Date <span class="required">*</span></label>
+            <input class="form-input" type="date" id="shift-date" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="shift-break">Break (minutes)</label>
+            <input class="form-input" type="number" id="shift-break" min="0" step="5" placeholder="0">
+          </div>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label" for="shift-start">Start time <span class="required">*</span></label>
+            <input class="form-input" type="time" id="shift-start" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="shift-end">End time <span class="required">*</span></label>
+            <input class="form-input" type="time" id="shift-end" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="shift-notes">Notes (optional)</label>
+          <input class="form-input" type="text" id="shift-notes" placeholder="e.g. Bank holiday, overtime…">
+        </div>
+        <div id="shift-preview" class="shift-preview hidden">
+          <div class="preview-row"><span>Hours worked</span><strong id="prev-hours">—</strong></div>
+          <div class="preview-row"><span>Gross pay</span><strong id="prev-gross">—</strong></div>
+          <div class="preview-row"><span>Holiday pay (12.07%)</span><strong id="prev-holiday">—</strong></div>
+          <div class="preview-row preview-total"><span>Total</span><strong id="prev-total">—</strong></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" id="modal-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="modal-submit">Save Shift</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
