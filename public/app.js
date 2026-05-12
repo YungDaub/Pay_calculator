@@ -111,6 +111,13 @@ async function loadDashboard() {
   toggle('alert-no-tax', data.ratesConfigured && !data.taxEnabled && !taxAlertDismissed);
 
   renderPeriod('month', data.thisMonth, data.taxEnabled);
+  countUp(document.getElementById('dash-month-total'),   data.thisMonth.actualTotal);
+  countUp(document.getElementById('dash-month-holiday'), data.holiday.paidPerMonth, { pre: 'Holiday paid: ' });
+  const monthNetEl = document.getElementById('dash-month-net');
+  if (data.taxEnabled && data.thisMonth.actualNet != null) {
+    monthNetEl.className = 'card-sub net';
+    countUp(monthNetEl, data.thisMonth.actualNet, { suf: ' est. net' });
+  }
   renderPeriod('week',  data.thisWeek,  data.taxEnabled);
   renderPeriod('ytd',   data.ytd,       data.taxEnabled);
 
@@ -143,7 +150,8 @@ async function loadDashboard() {
 
   animateRing();
   renderMonthBars(months);
-  renderWageAllocation(data.thisMonth.total);
+  renderWageAllocation(data.thisMonth.actualTotal);
+  renderHolidayLumpCard(data.holiday);
   renderSFECard();
 }
 
@@ -517,6 +525,29 @@ function renderSFECard() {
     { label: 'Prem. Bonds',     amount: sPB,           color: '#9b5de5' },
     { label: 'Current account', amount: currentAccount, color: 'rgba(255,255,255,0.15)' },
   ], next.amount);
+}
+
+function renderHolidayLumpCard(hol) {
+  countUp(document.getElementById('dash-lump-accrued'),   hol.lumpSum);
+  countUp(document.getElementById('dash-lump-projected'), hol.lumpSumProjected);
+  setText('dash-lump-months', hol.monthsUntilPayout + ' month' + (hol.monthsUntilPayout !== 1 ? 's' : '') + ' away');
+  setText('lump-paid-per-month', hol.paidPerMonth);
+  const targetEl = document.getElementById('lump-progress-target');
+  if (targetEl) targetEl.textContent = fmt(hol.lumpSumProjected);
+
+  const bar = document.getElementById('lump-progress-bar');
+  if (!bar || hol.lumpSumProjected <= 0) return;
+  const pct = Math.min(100, (hol.lumpSum / hol.lumpSumProjected) * 100);
+  const fill = bar.querySelector('.lump-bar-fill');
+  if (!fill) return;
+  if (reducedMotion()) {
+    fill.style.width = pct + '%';
+  } else {
+    fill.style.width = '0%';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      fill.style.width = pct + '%';
+    }));
+  }
 }
 
 function renderAllocBar(containerId, segments, total) {

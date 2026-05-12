@@ -1158,9 +1158,61 @@ body.cur-text .cursor-ring  { opacity: 0; }
   margin-top: 3px;
 }
 
+/* ─── Holiday lump sum card ──────────────────────────── */
+.lump-card { display: flex; flex-direction: column; gap: 14px; }
+.lump-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+.lump-card-amount { color: var(--teal); text-shadow: 0 0 22px rgba(0,221,213,0.4); }
+.lump-right { text-align: right; }
+.lump-projected-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+.lump-projected-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.lump-months-label {
+  font-size: 0.75rem;
+  color: var(--text-3);
+  margin-top: 2px;
+}
+.lump-progress-wrap { display: flex; flex-direction: column; gap: 4px; }
+.lump-progress-bar {
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.lump-bar-fill {
+  height: 100%;
+  background: var(--teal);
+  border-radius: 3px;
+  width: 0%;
+  transition: width 800ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.lump-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--text-3);
+}
+.lump-note {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
 /* Staggered entry for allocation cards */
 .tab.active .alloc-card:first-child { animation-delay: 0.44s; }
 .tab.active .sfe-card               { animation-delay: 0.52s; }
+.tab.active .lump-card              { animation-delay: 0.60s; }
 
 @media (max-width: 560px) {
   .alloc-total { font-size: 20px; }

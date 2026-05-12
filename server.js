@@ -178,7 +178,16 @@ app.get('/api/dashboard', (req, res) => {
     const mt = sumShifts(ms, config);
     holidayLumpSum += mt.holidayOwed - holidayPaidPerMonth;
   });
-  const totalHolidayPaid = Object.keys(shiftsByMonth).length * holidayPaidPerMonth;
+  const totalHolidayPaid   = Object.keys(shiftsByMonth).length * holidayPaidPerMonth;
+  const monthsWorked       = Object.keys(shiftsByMonth).length;
+  const avgMonthlyOwed     = monthsWorked > 0 ? allTotals.holidayOwed / monthsWorked : 0;
+
+  const lumpSumPayDate     = '2027-04-01';
+  const payDate            = new Date(lumpSumPayDate + 'T00:00:00');
+  const monthsUntilPayout  = Math.max(0,
+    (payDate.getFullYear() - now.getFullYear()) * 12 + payDate.getMonth() - now.getMonth()
+  );
+  const lumpSumProjected   = holidayLumpSum + monthsUntilPayout * (avgMonthlyOwed - holidayPaidPerMonth);
 
   // Project annual from full month × 12 (works well when shifts are pre-logged)
   const projectedAnnualTotal = monthTotals.total * 12;
@@ -196,15 +205,21 @@ app.get('/api/dashboard', (req, res) => {
     net: config.taxEnabled ? totals.total * (1 - effectiveRate) : null
   });
 
+  const monthActualTotal = monthTotals.grossPay + holidayPaidPerMonth;
+  const monthActualNet   = config.taxEnabled ? monthActualTotal * (1 - effectiveRate) : null;
+
   res.json({
     thisWeek:  withNet(weekTotals),
-    thisMonth: withNet(monthTotals),
+    thisMonth: { ...withNet(monthTotals), actualTotal: monthActualTotal, actualNet: monthActualNet },
     ytd:       withNet(ytdTotals),
     holiday: {
-      totalOwed:    allTotals.holidayOwed,
-      totalPaid:    totalHolidayPaid,
-      lumpSum:      holidayLumpSum,
-      paidPerMonth: holidayPaidPerMonth,
+      totalOwed:         allTotals.holidayOwed,
+      totalPaid:         totalHolidayPaid,
+      lumpSum:           holidayLumpSum,
+      lumpSumProjected,
+      lumpSumPayDate,
+      monthsUntilPayout,
+      paidPerMonth:      holidayPaidPerMonth,
     },
     projectedAnnual: {
       gross: projectedAnnualGross,
