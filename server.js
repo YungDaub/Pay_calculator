@@ -2,7 +2,11 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const appConfig = require('./config');
+const _baseConfig   = require('./config');
+const _personalPath = path.join(__dirname, 'data', 'app-config.json');
+const appConfig     = fs.existsSync(_personalPath)
+  ? { ..._baseConfig, ...JSON.parse(fs.readFileSync(_personalPath, 'utf8')) }
+  : _baseConfig;
 
 const app = express();
 const PORT = process.env.PORT || 3000;
