@@ -132,12 +132,20 @@
           </div>
 
           <div class="card holiday-card">
-            <div>
-              <div class="card-label">Holiday pay accrued</div>
-              <div class="card-amount" id="dash-holiday-total">—</div>
-            </div>
-            <div class="holiday-right">
-              <div class="card-sub">12.07% of all gross pay</div>
+            <div class="card-label">Holiday pay</div>
+            <div class="holiday-breakdown">
+              <div class="holiday-row">
+                <span class="holiday-row-label">Owed <span class="holiday-row-sub">(12.07% of all gross)</span></span>
+                <span class="holiday-row-value" id="dash-holiday-owed">—</span>
+              </div>
+              <div class="holiday-row">
+                <span class="holiday-row-label">Paid <span class="holiday-row-sub" id="dash-holiday-paid-label"></span></span>
+                <span class="holiday-row-value holiday-paid" id="dash-holiday-paid">—</span>
+              </div>
+              <div class="holiday-row holiday-lump-row">
+                <span class="holiday-row-label">April lump sum accrued</span>
+                <span class="holiday-row-value holiday-lump" id="dash-holiday-lump">—</span>
+              </div>
             </div>
           </div>
         </div>

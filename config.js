@@ -8,6 +8,9 @@ module.exports = {
     studentLoanEnabled: false,
   },
 
+  // Fixed monthly holiday pay the employer actually pays (£)
+  holidayPaidPerMonth: 40,
+
   // Add upcoming payment dates/amounts in data/app-config.json (see README)
   sfePayments: [],
 

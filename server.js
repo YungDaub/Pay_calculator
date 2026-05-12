@@ -41,10 +41,10 @@ function calcShift(shift, config) {
   const rate = usePostRate ? Number(config.postBirthdayRate) || 0 : Number(config.currentRate) || 0;
 
   const grossPay = hoursWorked * rate;
-  const holidayPay = grossPay * 0.1207;
-  const totalBeforeDeductions = grossPay + holidayPay;
+  const holidayOwed = grossPay * 0.1207;
+  const totalBeforeDeductions = grossPay + holidayOwed;
 
-  return { ...shift, hoursWorked, rate, usePostRate, grossPay, holidayPay, totalBeforeDeductions };
+  return { ...shift, hoursWorked, rate, usePostRate, grossPay, holidayOwed, totalBeforeDeductions };
 }
 
 function sumShifts(shifts, config) {
@@ -52,12 +52,12 @@ function sumShifts(shifts, config) {
     const c = calcShift(s, config);
     return {
       hoursWorked: acc.hoursWorked + c.hoursWorked,
-      grossPay: acc.grossPay + c.grossPay,
-      holidayPay: acc.holidayPay + c.holidayPay,
-      total: acc.total + c.totalBeforeDeductions,
-      count: acc.count + 1
+      grossPay:    acc.grossPay    + c.grossPay,
+      holidayOwed: acc.holidayOwed + c.holidayOwed,
+      total:       acc.total       + c.totalBeforeDeductions,
+      count:       acc.count       + 1
     };
-  }, { hoursWorked: 0, grossPay: 0, holidayPay: 0, total: 0, count: 0 });
+  }, { hoursWorked: 0, grossPay: 0, holidayOwed: 0, total: 0, count: 0 });
 }
 
 function calcTaxes(annualTotal, config) {
@@ -166,6 +166,20 @@ app.get('/api/dashboard', (req, res) => {
   const ytdTotals   = sumShifts(ytdShifts, config);
   const allTotals   = sumShifts(allShiftsValid, config);
 
+  const holidayPaidPerMonth = appConfig.holidayPaidPerMonth || 40;
+  const shiftsByMonth = {};
+  allShifts.forEach(s => {
+    const key = s.date.slice(0, 7);
+    if (!shiftsByMonth[key]) shiftsByMonth[key] = [];
+    shiftsByMonth[key].push(s);
+  });
+  let holidayLumpSum = 0;
+  Object.values(shiftsByMonth).forEach(ms => {
+    const mt = sumShifts(ms, config);
+    holidayLumpSum += mt.holidayOwed - holidayPaidPerMonth;
+  });
+  const totalHolidayPaid = Object.keys(shiftsByMonth).length * holidayPaidPerMonth;
+
   // Project annual from full month × 12 (works well when shifts are pre-logged)
   const projectedAnnualTotal = monthTotals.total * 12;
   const projectedAnnualGross = monthTotals.grossPay * 12;
@@ -186,7 +200,12 @@ app.get('/api/dashboard', (req, res) => {
     thisWeek:  withNet(weekTotals),
     thisMonth: withNet(monthTotals),
     ytd:       withNet(ytdTotals),
-    totalHolidayAccrued: allTotals.holidayPay,
+    holiday: {
+      totalOwed:    allTotals.holidayOwed,
+      totalPaid:    totalHolidayPaid,
+      lumpSum:      holidayLumpSum,
+      paidPerMonth: holidayPaidPerMonth,
+    },
     projectedAnnual: {
       gross: projectedAnnualGross,
       total: projectedAnnualTotal,

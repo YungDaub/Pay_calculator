@@ -377,13 +377,52 @@ body {
 .holiday-card {
   grid-column: 1 / -1;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  flex-direction: column;
+  gap: 12px;
 }
-.holiday-card .card-amount { color: var(--green); text-shadow: 0 0 22px rgba(0, 201, 122, 0.4); }
-.holiday-right { text-align: right; }
-.holiday-right .card-sub { margin: 0; }
+.holiday-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+.holiday-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.holiday-row-label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.holiday-row-sub {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+.holiday-row-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--green);
+}
+.holiday-row-value.holiday-paid {
+  color: var(--text-muted);
+}
+.holiday-lump-row {
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.holiday-lump-row .holiday-row-label {
+  color: var(--text);
+  font-weight: 500;
+}
+.holiday-row-value.holiday-lump {
+  font-size: 1.1rem;
+  color: var(--teal);
+  text-shadow: 0 0 16px rgba(0,221,213,0.35);
+}
 
 /* ─── Cards ──────────────────────────────────────────── */
 .card {
@@ -1147,8 +1186,7 @@ body.cur-text .cursor-ring  { opacity: 0; }
   .brand-sub { display: none; }
   .header-tab-name { display: none; }
   .dashboard-grid { grid-template-columns: 1fr; gap: 10px; margin-bottom: 10px; }
-  .holiday-card { grid-column: 1; flex-direction: column; align-items: flex-start; }
-  .holiday-right { text-align: left; }
+  .holiday-card { grid-column: 1; }
   .period-card:nth-child(1) { padding: 22px 22px 18px; }
   .period-card:nth-child(1) .card-amount { font-size: 42px; }
   .card { padding: 18px; }

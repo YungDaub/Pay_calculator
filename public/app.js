@@ -114,7 +114,11 @@ async function loadDashboard() {
   renderPeriod('week',  data.thisWeek,  data.taxEnabled);
   renderPeriod('ytd',   data.ytd,       data.taxEnabled);
 
-  countUp(document.getElementById('dash-holiday-total'), data.totalHolidayAccrued);
+  const hol = data.holiday;
+  countUp(document.getElementById('dash-holiday-owed'), hol.totalOwed);
+  countUp(document.getElementById('dash-holiday-paid'), hol.totalPaid);
+  countUp(document.getElementById('dash-holiday-lump'), hol.lumpSum);
+  setText('dash-holiday-paid-label', `(£${hol.paidPerMonth}/month)`);
 
   const ann = data.projectedAnnual;
   if (data.taxEnabled && ann.taxes) {
@@ -155,8 +159,8 @@ function renderPeriod(key, data, taxEnabled) {
     subEl.textContent = 'gross + holiday pay';
   }
 
-  countUp(document.getElementById(`dash-${key}-gross`),   data.grossPay,   { pre: 'Gross: ' });
-  countUp(document.getElementById(`dash-${key}-holiday`), data.holidayPay, { pre: 'Holiday: ' });
+  countUp(document.getElementById(`dash-${key}-gross`),   data.grossPay,    { pre: 'Gross: ' });
+  countUp(document.getElementById(`dash-${key}-holiday`), data.holidayOwed, { pre: 'Holiday owed: ' });
   setText(`dash-${key}-hours`, 'Hours: ' + fmtHours(data.hoursWorked));
 }
 
@@ -305,7 +309,7 @@ async function loadShifts() {
       </div>
       <div class="shift-row-pay">
         <div class="shift-row-total">${fmt(s.totalBeforeDeductions)}</div>
-        <div class="shift-row-meta">${fmtHours(s.hoursWorked)} · ${fmt(s.grossPay)} gross · ${fmt(s.holidayPay)} hol${s.usePostRate ? ' <span class="rate-up">new</span>' : ''}</div>
+        <div class="shift-row-meta">${fmtHours(s.hoursWorked)} · ${fmt(s.grossPay)} gross · ${fmt(s.holidayOwed)} hol owed${s.usePostRate ? ' <span class="rate-up">new</span>' : ''}</div>
       </div>
       <div class="shift-row-actions">
         <button class="btn-icon" title="Edit" data-action="edit" data-id="${s.id}">
